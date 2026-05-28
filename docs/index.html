@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="Presentation du projet OLEEN, une application mobile Expo React Native regroupant sport, astronomie, solfege, musique live, reseau social et paris simules."
+    />
+    <title>OLEEN - Projet mobile</title>
+    <link rel="icon" href="assets/favicon.png" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="#accueil" aria-label="Retour a l'accueil">
+        <img src="assets/oleen-icon.png" alt="" />
+        <span>OLEEN</span>
+      </a>
+      <nav class="top-nav" aria-label="Navigation principale">
+        <a href="#modules">Modules</a>
+        <a href="#equipe">Equipe</a>
+        <a href="#tech">Tech</a>
+        <a href="#demo">Demo</a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="hero" id="accueil" aria-labelledby="hero-title">
+        <img class="hero-bg" src="assets/oleen-icon.png" alt="" />
+        <div class="hero-content">
+          <p class="eyebrow">Projet mobile lycee - 2026</p>
+          <h1 id="hero-title">OLEEN</h1>
+          <p class="hero-text">
+            Une application mobile qui rassemble sport, astronomie, apprentissage musical,
+            contenus live, interactions sociales et gestion de mises virtuelles.
+          </p>
+          <div class="hero-actions">
+            <a class="primary-link" href="https://github.com/ODG747/OLEEN" target="_blank" rel="noreferrer">
+              Voir le depot GitHub
+            </a>
+            <a class="secondary-link" href="#modules">Decouvrir les modules</a>
+          </div>
+        </div>
+      </section>
+
+      <section class="section intro-section" aria-label="Resume du projet">
+        <div class="intro-copy">
+          <p class="section-kicker">Objectif</p>
+          <h2>Presenter une application mobile complete et testable.</h2>
+          <p>
+            OLEEN est developpee avec Expo React Native pour fonctionner sur Android et iOS.
+            La version actuelle est une demo fonctionnelle : les donnees sont locales, les
+            interactions sont sauvegardees sur l'appareil et chaque fonctionnalite demandee
+            possede son propre espace dans l'application.
+          </p>
+        </div>
+        <div class="phone-preview" aria-label="Apercu de l'application OLEEN">
+          <div class="phone-top"></div>
+          <div class="phone-screen">
+            <div class="app-header">
+              <span>OLEEN</span>
+              <strong>1000 cr</strong>
+            </div>
+            <div class="app-title">Tableau de bord</div>
+            <div class="app-grid">
+              <span>Sport</span>
+              <span>Astro</span>
+              <span>Paris</span>
+              <span>Solfege</span>
+              <span>Live</span>
+              <span>Social</span>
+            </div>
+            <div class="app-card">
+              <strong>Demo mobile</strong>
+              <p>6 modules obligatoires integres.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="modules" aria-labelledby="modules-title">
+        <p class="section-kicker">Fonctionnalites</p>
+        <h2 id="modules-title">Les 6 modules obligatoires</h2>
+        <div class="module-grid">
+          <article class="module-card accent-gold">
+            <span class="module-index">01</span>
+            <h3>Videos de sports</h3>
+            <p>Lecteur visuel, selection de videos sportives et liens vers des sources externes.</p>
+          </article>
+          <article class="module-card accent-blue">
+            <span class="module-index">02</span>
+            <h3>Sciences astronomiques</h3>
+            <p>Articles courts, evenements d'observation du ciel et quiz de comprehension.</p>
+          </article>
+          <article class="module-card accent-green">
+            <span class="module-index">03</span>
+            <h3>Paris sportifs simules</h3>
+            <p>Matchs fictifs, cotes, mises en credits virtuels, tickets et historique.</p>
+          </article>
+          <article class="module-card accent-teal">
+            <span class="module-index">04</span>
+            <h3>Solfege par instrument</h3>
+            <p>Parcours piano, guitare, violon, flute, batterie et saxophone avec progression.</p>
+          </article>
+          <article class="module-card accent-red">
+            <span class="module-index">05</span>
+            <h3>Musique live</h3>
+            <p>Scene de lecture, performances en direct ou replay et sources musicales externes.</p>
+          </article>
+          <article class="module-card accent-dark">
+            <span class="module-index">06</span>
+            <h3>Reseau social</h3>
+            <p>Profil, fil d'actualite, publication, likes, commentaires et partages.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section team-section" id="equipe" aria-labelledby="team-title">
+        <div>
+          <p class="section-kicker">Organisation</p>
+          <h2 id="team-title">Une equipe de 7 personnes</h2>
+          <p>
+            Le projet est organise par roles afin de separer le developpement, la creation
+            visuelle, la communication et le suivi financier.
+          </p>
+        </div>
+        <div class="team-list">
+          <div class="role-row">
+            <span>Developpement</span>
+            <strong>Chef dev + 1 dev</strong>
+          </div>
+          <div class="role-row">
+            <span>Design</span>
+            <strong>3 designers</strong>
+          </div>
+          <div class="role-row">
+            <span>Communication</span>
+            <strong>1 responsable</strong>
+          </div>
+          <div class="role-row">
+            <span>Finances</span>
+            <strong>1 responsable</strong>
+          </div>
+        </div>
+      </section>
+
+      <section class="section tech-section" id="tech" aria-labelledby="tech-title">
+        <p class="section-kicker">Technique</p>
+        <h2 id="tech-title">Stack du projet</h2>
+        <div class="tech-grid">
+          <div class="tech-item">
+            <span>Mobile</span>
+            <strong>Expo SDK 54</strong>
+          </div>
+          <div class="tech-item">
+            <span>Interface</span>
+            <strong>React Native</strong>
+          </div>
+          <div class="tech-item">
+            <span>Langage</span>
+            <strong>JavaScript</strong>
+          </div>
+          <div class="tech-item">
+            <span>Donnees</span>
+            <strong>AsyncStorage</strong>
+          </div>
+          <div class="tech-item">
+            <span>Versioning</span>
+            <strong>GitHub</strong>
+          </div>
+          <div class="tech-item">
+            <span>Site</span>
+            <strong>HTML, CSS, JS</strong>
+          </div>
+        </div>
+      </section>
+
+      <section class="section demo-section" id="demo" aria-labelledby="demo-title">
+        <div>
+          <p class="section-kicker">Presentation</p>
+          <h2 id="demo-title">Parcours de demonstration</h2>
+          <p>
+            La demonstration commence par l'accueil, puis montre chaque module dans l'ordre.
+            Le but est de prouver que toutes les fonctionnalites demandees sont presentes et
+            utilisables dans l'application.
+          </p>
+        </div>
+        <ol class="demo-steps">
+          <li>Ouvrir l'application avec Expo Go.</li>
+          <li>Presenter le tableau de bord OLEEN.</li>
+          <li>Parcourir les 6 modules obligatoires.</li>
+          <li>Montrer une interaction : mise virtuelle, cours valide ou publication sociale.</li>
+        </ol>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <span>OLEEN - Projet mobile 2026</span>
+      <a href="https://github.com/ODG747/OLEEN" target="_blank" rel="noreferrer">GitHub</a>
+    </footer>
+
+    <script src="script.js"></script>
+  </body>
+</html>

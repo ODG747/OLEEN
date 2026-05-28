@@ -1,115 +1,95 @@
 # OLEEN
 
-Application mobile Expo React Native realisee pour un devoir de lycee.
+OLEEN est une application mobile realisee dans le cadre d'un projet de lycee.
+Elle rassemble plusieurs espaces dans une seule experience : sport, astronomie,
+musique, apprentissage du solfege, reseau social et paris sportifs simules.
 
-OLEEN regroupe plusieurs univers dans une seule application mobile : videos de sport, sciences astronomiques, paris sportifs simules, apprentissage du solfege, musique live et reseau social.
+## Site de presentation
 
-## Apercu
+Le site vitrine du projet se trouve dans le dossier `docs/`.
 
-Cette version est une demo mobile complete, utilisable avec Expo Go sur Android et iOS. Les donnees sont stockees localement sur le telephone, sans serveur distant.
+Quand GitHub Pages est active, il est publie a cette adresse :
 
-Le module de paris sportifs utilise uniquement des credits virtuels. Il ne contient pas d'argent reel, pas de paiement, pas de retrait et pas de compte de paris.
+```text
+https://odg747.github.io/OLEEN/
+```
 
-## Fonctionnalites
+## Application mobile
 
-- Videos de sports : lecteur visuel, selection de videos et liens vers des sources externes.
-- Sciences astronomiques : contenus educatifs, evenements du ciel et quiz rapide.
-- Paris sportifs : matchs fictifs, cotes, mises, tickets, gains potentiels et historique.
-- Solfege par instrument : modules piano, guitare, violon, flute, batterie et saxophone.
-- Videos de musique en temps reel : scene live, selection de performances et liens externes.
-- Reseau social : profil utilisateur, publications, likes, commentaires et partages.
+La version mobile est developpee avec Expo React Native. Elle peut etre testee
+sur Android et iOS avec Expo Go.
 
-## Stack technique
+Fonctionnalites principales :
+
+- Videos de sports
+- Sciences astronomiques
+- Paris sportifs simules avec credits virtuels
+- Apprentissage du solfege par instrument
+- Videos de musique live ou replay
+- Reseau social avec publications, likes, commentaires et partages
+
+Le module de paris est uniquement une simulation. Il n'utilise pas d'argent reel.
+
+## Stack
 
 - Expo SDK 54
 - React Native 0.81
 - React 19
 - JavaScript
-- AsyncStorage pour les donnees locales
-- Lucide React Native pour les icones
+- AsyncStorage
+- HTML, CSS et JavaScript pour le site de presentation
 
 ## Installation
-
-Installe Node.js, puis lance :
 
 ```powershell
 npm install
 ```
 
-## Lancement
+## Lancer l'application
 
 ```powershell
 npm start
 ```
 
-Le projet demarre sur le port `8083`.
+Le serveur Expo demarre sur le port `8083`.
 
-Avec Expo Go :
+## Lancer le site en local
 
-1. Ouvrir Expo Go sur le telephone.
-2. Scanner le QR code affiche dans le terminal.
-3. Verifier que le telephone et le PC sont sur le meme reseau Wi-Fi.
-
-Lien local utilise pendant le developpement :
+Le site est statique. Il suffit d'ouvrir ce fichier dans un navigateur :
 
 ```text
-exp://192.168.1.6:8083
+docs/index.html
 ```
 
-## Compatibilite Expo Go
+## Organisation de l'equipe
 
-Le projet est aligne sur Expo SDK 54 pour fonctionner avec Expo Go `54.0.8`.
+L'equipe est composee de 7 personnes :
 
-Si Expo Go affiche une erreur de SDK incompatible, verifier la version d'Expo Go et relancer le serveur avec cache vide :
+- 1 chef developpeur
+- 1 developpeur
+- 3 designers
+- 1 responsable communication
+- 1 responsable finances
 
-```powershell
-npm start
-```
-
-## Structure du projet
+## Structure
 
 ```text
-oleen-mobile/
-  App.js
-  app.json
-  package.json
-  metro.config.js
-  GUIDE_DEBUTANT.md
-  assets/
+.
++-- App.js
++-- app.json
++-- assets/
++-- docs/
+|   +-- index.html
+|   +-- styles.css
+|   +-- script.js
+|   +-- assets/
++-- metro.config.js
++-- package.json
++-- README.md
 ```
 
-## Guide debutant
+## Depot
 
-Le fichier `GUIDE_DEBUTANT.md` contient un plan de travail simple jusqu'a la date cible du `03/06/2026`, avec une approche progressive pour tester et ameliorer l'application.
-
-## Etat du projet
-
-Version actuelle : demo fonctionnelle.
-
-Ce qui est deja pret :
-
-- Interface mobile complete
-- Navigation par modules
-- Donnees de demonstration
-- Sauvegarde locale des interactions
-- Compilation Android verifiee avec Expo
-
-Ameliorations possibles :
-
-- Ajouter le vrai logo OLEEN
-- Remplacer les contenus fictifs par des contenus definitifs
-- Ajouter des captures d'ecran au README
-- Creer une version APK avec EAS Build
-
-## Commandes utiles
-
-```powershell
-npm start
-npm run android
-npm run ios
-npx expo-doctor
+```text
+https://github.com/ODG747/OLEEN
 ```
-
-## Auteur
-
-Projet OLEEN, devoir de lycee, 2026.

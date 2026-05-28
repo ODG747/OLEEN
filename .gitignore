@@ -33,6 +33,9 @@ expo-server.log
 
 # local env files
 .env*.local
+.claude/
+AGENTS.md
+CLAUDE.md
 
 # typescript
 *.tsbuildinfo
