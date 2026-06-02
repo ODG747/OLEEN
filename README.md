@@ -16,8 +16,13 @@ Reglages Netlify :
 ```text
 Base directory: .
 Publish directory: docs
-Build command: laisser vide
+Build command: laisser vide, ou utiliser:
+echo Static Netlify site: no build step required
 ```
+
+Important : si Netlify affiche encore `expo export -p web`, il faut supprimer cette
+commande dans Site configuration > Build & deploy > Build settings. Le site web
+du projet n'est pas l'export web Expo, c'est le site statique du dossier `docs`.
 
 Quand GitHub Pages est active, il peut aussi etre publie a cette adresse :
 

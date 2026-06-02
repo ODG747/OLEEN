@@ -1,4 +1,5 @@
 [build]
+  command = "echo Static Netlify site: no build step required"
   publish = "docs"
 
 [[headers]]
