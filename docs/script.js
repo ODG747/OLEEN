@@ -1,8 +1,24 @@
 const header = document.querySelector('.site-header');
 const themeToggle = document.querySelector('.theme-toggle');
-const savedTheme = localStorage.getItem('oleen-theme');
+const THEME_STORAGE_KEY = 'oleen-theme';
 
-if (savedTheme === 'dark') {
+function getStoredTheme() {
+  try {
+    return localStorage.getItem(THEME_STORAGE_KEY);
+  } catch (error) {
+    return null;
+  }
+}
+
+function setStoredTheme(theme) {
+  try {
+    localStorage.setItem(THEME_STORAGE_KEY, theme);
+  } catch (error) {
+    /* ignore */
+  }
+}
+
+if (getStoredTheme() === 'dark') {
   document.documentElement.dataset.theme = 'dark';
 }
 
@@ -33,10 +49,10 @@ themeToggle?.addEventListener('click', () => {
 
   if (isDark) {
     delete document.documentElement.dataset.theme;
-    localStorage.setItem('oleen-theme', 'light');
+    setStoredTheme('light');
   } else {
     document.documentElement.dataset.theme = 'dark';
-    localStorage.setItem('oleen-theme', 'dark');
+    setStoredTheme('dark');
   }
 
   updateThemeButton();

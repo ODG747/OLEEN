@@ -9,6 +9,17 @@
     />
     <title>OLEEN - Projet mobile</title>
     <link rel="icon" href="assets/favicon.png" />
+    <script>
+      (function () {
+        try {
+          if (localStorage.getItem('oleen-theme') === 'dark') {
+            document.documentElement.dataset.theme = 'dark';
+          }
+        } catch (error) {
+          /* localStorage indisponible (mode prive, etc.) */
+        }
+      })();
+    </script>
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
