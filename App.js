@@ -75,42 +75,42 @@ const MODULES = [
     title: 'Videos de sports',
     subtitle: 'Selection et agregateur video',
     Icon: Dumbbell,
-    color: colors.gold,
+    color: BRAND.gold,
   },
   {
     id: 'astronomy',
     title: 'Sciences astronomiques',
     subtitle: 'Articles, evenements et quiz',
     Icon: Telescope,
-    color: colors.blue,
+    color: BRAND.blue,
   },
   {
     id: 'betting',
     title: 'Paris sportifs',
     subtitle: 'Mises simulees en credits',
     Icon: BadgeDollarSign,
-    color: colors.green,
+    color: BRAND.green,
   },
   {
     id: 'solfege',
     title: 'Solfege par instrument',
     subtitle: 'Modules piano, guitare, violon...',
     Icon: BookOpen,
-    color: colors.teal,
+    color: BRAND.teal,
   },
   {
     id: 'music',
     title: 'Videos de musique live',
     subtitle: 'Scene en direct et replay',
     Icon: Radio,
-    color: colors.red,
+    color: BRAND.red,
   },
   {
     id: 'social',
     title: 'Reseau social',
     subtitle: 'Profil, fil, likes, commentaires',
     Icon: Users,
-    color: colors.dark,
+    color: BRAND.dark,
   },
 ];
 
@@ -212,7 +212,7 @@ const INSTRUMENTS = [
   {
     id: 'piano',
     title: 'Piano',
-    color: colors.dark,
+    color: BRAND.dark,
     lessons: [
       { id: 'p1', title: 'Lire les notes sur la cle de sol', skill: 'Do Re Mi Fa Sol' },
       { id: 'p2', title: 'Jouer une gamme majeure', skill: 'Do majeur' },
@@ -222,7 +222,7 @@ const INSTRUMENTS = [
   {
     id: 'guitare',
     title: 'Guitare',
-    color: colors.gold,
+    color: BRAND.gold,
     lessons: [
       { id: 'g1', title: 'Lire une tablature', skill: 'Cordes et frettes' },
       { id: 'g2', title: 'Accords ouverts', skill: 'Em, C, G, D' },
@@ -232,7 +232,7 @@ const INSTRUMENTS = [
   {
     id: 'violon',
     title: 'Violon',
-    color: colors.red,
+    color: BRAND.red,
     lessons: [
       { id: 'v1', title: 'Position des cordes', skill: 'Sol Re La Mi' },
       { id: 'v2', title: 'Premiere lecture melodique', skill: 'Notes longues' },
@@ -242,7 +242,7 @@ const INSTRUMENTS = [
   {
     id: 'flute',
     title: 'Flute',
-    color: colors.teal,
+    color: BRAND.teal,
     lessons: [
       { id: 'f1', title: 'Respiration et phrases', skill: 'Souffle stable' },
       { id: 'f2', title: 'Notes liees', skill: 'Legato' },
@@ -252,7 +252,7 @@ const INSTRUMENTS = [
   {
     id: 'batterie',
     title: 'Batterie',
-    color: colors.blue,
+    color: BRAND.blue,
     lessons: [
       { id: 'b1', title: 'Pulsation et tempo', skill: '60 a 90 BPM' },
       { id: 'b2', title: 'Rythme rock basique', skill: 'Kick snare hi-hat' },
@@ -1437,4 +1437,3 @@ function formatCredits(value) {
   const number = Number(value) || 0;
   return `${number.toFixed(number % 1 === 0 ? 0 : 2)} cr`;
 }
-
