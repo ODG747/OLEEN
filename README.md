@@ -53,6 +53,22 @@ npm start
 
 Le serveur Expo demarre sur le port `8083`.
 
+## Builds EAS
+
+Le projet est configure avec EAS Build.
+
+Build de test interne :
+
+```powershell
+npx eas build --platform android --profile preview
+```
+
+Build de production :
+
+```powershell
+npx eas build --platform android --profile production
+```
+
 ## Lancer le site en local
 
 Le site est statique. Il suffit d'ouvrir ce fichier dans un navigateur :

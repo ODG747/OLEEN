@@ -13,10 +13,17 @@ expo-env.d.ts
 .kotlin/
 *.orig.*
 *.jks
+*.keystore
 *.p8
 *.p12
 *.key
 *.mobileprovision
+google-services.json
+GoogleService-Info.plist
+credentials.json
+credentials.*.json
+service-account*.json
+eas-build-*.tar.gz
 
 # Metro
 .metro-health-check*
@@ -32,6 +39,8 @@ expo-server.log
 *.pem
 
 # local env files
+.env
+.env.*
 .env*.local
 .claude/
 AGENTS.md
