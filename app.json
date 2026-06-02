@@ -7,10 +7,6 @@
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "scheme": "oleen",
-    "ios": {
-      "supportsTablet": true,
-      "bundleIdentifier": "com.odg747.oleen"
-    },
     "android": {
       "adaptiveIcon": {
         "backgroundColor": "#1F2329",

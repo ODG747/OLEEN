@@ -4,7 +4,6 @@ import {
   Alert,
   KeyboardAvoidingView,
   Linking,
-  Platform,
   Pressable,
   SafeAreaView,
   ScrollView,
@@ -359,7 +358,7 @@ export default function App() {
       <View style={styles.shell}>
         <Header title={title} wallet={state.wallet} />
         <KeyboardAvoidingView
-          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+          behavior={undefined}
           style={styles.contentWrap}
         >
           <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
@@ -537,7 +536,7 @@ function HomeScreen({ state, navigate }) {
 
       <View style={styles.proofGrid}>
         <MiniProof label="Equipe" value="7 roles" />
-        <MiniProof label="Mobile" value="iOS + Android" />
+        <MiniProof label="Mobile" value="Android" />
         <MiniProof label="Build" value="EAS configure" />
       </View>
     </View>

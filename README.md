@@ -32,8 +32,8 @@ https://odg747.github.io/OLEEN/
 
 ## Application mobile
 
-La version mobile est developpee avec Expo React Native. Elle peut etre testee
-sur Android et iOS avec Expo Go.
+La version mobile est developpee avec Expo React Native. Elle est presentee et
+testee sur Android avec Expo Go.
 
 Fonctionnalites principales :
 
