@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import {
   Alert,
@@ -448,6 +448,7 @@ function Header({ title, wallet }) {
       <View>
         <Text style={styles.brand}>OLEEN</Text>
         <Text style={styles.headerTitle}>{title}</Text>
+        <Text style={styles.headerCaption}>Prototype mobile - Expo SDK 54</Text>
       </View>
       <View style={styles.walletBadge}>
         <WalletCards size={17} color={COLORS.gold} />
@@ -493,7 +494,7 @@ function HomeScreen({ state, navigate }) {
           </View>
           <View style={styles.flex}>
             <Text style={styles.heroTitle}>Tableau de bord OLEEN</Text>
-            <Text style={styles.heroText}>Sport, astronomie, solfege, musique live et communaute.</Text>
+            <Text style={styles.heroText}>Une demo mobile complete pour presenter les 6 modules du projet.</Text>
           </View>
         </View>
         <View style={styles.statsRow}>
@@ -501,6 +502,16 @@ function HomeScreen({ state, navigate }) {
           <StatPill label="Cours" value={`${completedCount}/18`} />
           <StatPill label="Paris" value={`${pendingBets}`} />
           <StatPill label="Likes" value={`${totalLikes}`} />
+        </View>
+      </View>
+
+      <View style={styles.statusPanel}>
+        <View style={styles.statusIcon}>
+          <CheckCircle2 size={22} color={COLORS.green} />
+        </View>
+        <View style={styles.flex}>
+          <Text style={styles.statusTitle}>Projet pret pour la demonstration</Text>
+          <Text style={styles.statusText}>Navigation, interactions locales, credits virtuels et progression sont operationnels.</Text>
         </View>
       </View>
 
@@ -523,6 +534,12 @@ function HomeScreen({ state, navigate }) {
           <Star size={20} color={COLORS.gold} />
         </View>
       </Card>
+
+      <View style={styles.proofGrid}>
+        <MiniProof label="Equipe" value="7 roles" />
+        <MiniProof label="Mobile" value="iOS + Android" />
+        <MiniProof label="Build" value="EAS configure" />
+      </View>
     </View>
   );
 }
@@ -700,6 +717,16 @@ function BettingScreen({ state, setState }) {
           <Text style={styles.demoBadgeText}>Simulation</Text>
         </View>
       </View>
+
+      <Card>
+        <View style={styles.rowSmall}>
+          <CheckCircle2 size={22} color={COLORS.green} />
+          <View style={styles.flex}>
+            <Text style={styles.cardTitle}>Simulation responsable</Text>
+            <Text style={styles.smallMuted}>Les mises utilisent uniquement des credits virtuels. Aucun argent reel n'est gere par l'application.</Text>
+          </View>
+        </View>
+      </Card>
 
       <SectionTitle title="Matchs disponibles" />
       {MATCHES.map((match) => (
@@ -1159,6 +1186,15 @@ function StatPill({ label, value }) {
   );
 }
 
+function MiniProof({ label, value }) {
+  return (
+    <View style={styles.miniProof}>
+      <Text style={styles.miniProofValue}>{value}</Text>
+      <Text style={styles.miniProofLabel}>{label}</Text>
+    </View>
+  );
+}
+
 function Chip({ label, active, onPress }) {
   return (
     <Pressable style={[styles.chip, active && styles.chipActive]} onPress={onPress}>
@@ -1238,6 +1274,11 @@ const styles = StyleSheet.create({
     fontWeight: '800',
     letterSpacing: 0,
   },
+  headerCaption: {
+    color: '#D8D2C5',
+    fontSize: 12,
+    marginTop: 3,
+  },
   walletBadge: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -1297,6 +1338,35 @@ const styles = StyleSheet.create({
     color: '#D8D2C5',
     marginTop: 5,
     lineHeight: 20,
+  },
+  statusPanel: {
+    backgroundColor: '#EEF8F1',
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#BFDCC7',
+    padding: 14,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  statusIcon: {
+    width: 42,
+    height: 42,
+    borderRadius: 8,
+    backgroundColor: '#FFFFFF',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  statusTitle: {
+    color: COLORS.ink,
+    fontSize: 15,
+    fontWeight: '900',
+  },
+  statusText: {
+    color: COLORS.muted,
+    fontSize: 13,
+    lineHeight: 18,
+    marginTop: 3,
   },
   statsRow: {
     flexDirection: 'row',
@@ -1370,6 +1440,30 @@ const styles = StyleSheet.create({
     color: COLORS.muted,
     fontSize: 12,
     lineHeight: 17,
+  },
+  proofGrid: {
+    flexDirection: 'row',
+    gap: 8,
+  },
+  miniProof: {
+    flex: 1,
+    minHeight: 72,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: COLORS.line,
+    backgroundColor: COLORS.panel,
+    padding: 10,
+    justifyContent: 'center',
+  },
+  miniProofValue: {
+    color: COLORS.ink,
+    fontSize: 15,
+    fontWeight: '900',
+  },
+  miniProofLabel: {
+    color: COLORS.muted,
+    fontSize: 11,
+    marginTop: 3,
   },
   card: {
     backgroundColor: COLORS.panel,

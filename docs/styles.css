@@ -199,6 +199,37 @@ a {
   line-height: 1.7;
 }
 
+.proof-section {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  padding-top: 18px;
+}
+
+.proof-card {
+  min-height: 116px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel);
+  padding: 16px;
+}
+
+.proof-card span {
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.proof-card strong {
+  color: var(--ink);
+  font-size: 21px;
+  line-height: 1.2;
+}
+
 .intro-section,
 .team-section,
 .demo-section {
@@ -428,6 +459,36 @@ a {
   font-weight: 800;
 }
 
+.delivery-section {
+  border-top: 1px solid var(--line);
+}
+
+.delivery-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  margin-top: 28px;
+}
+
+.delivery-grid article {
+  min-height: 190px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel);
+  padding: 18px;
+}
+
+.delivery-grid h3 {
+  margin: 0 0 10px;
+  color: var(--ink);
+  font-size: 22px;
+}
+
+.delivery-grid p {
+  margin: 0;
+  font-size: 15px;
+}
+
 .site-footer {
   min-height: 78px;
   display: flex;
@@ -472,8 +533,10 @@ a {
   .intro-section,
   .team-section,
   .demo-section,
+  .proof-section,
   .module-grid,
-  .tech-grid {
+  .tech-grid,
+  .delivery-grid {
     grid-template-columns: 1fr;
   }
 

@@ -8,7 +8,18 @@ musique, apprentissage du solfege, reseau social et paris sportifs simules.
 
 Le site vitrine du projet se trouve dans le dossier `docs/`.
 
-Quand GitHub Pages est active, il est publie a cette adresse :
+Il peut etre heberge avec Netlify. Le fichier `netlify.toml` indique deja que
+le dossier a publier est `docs`.
+
+Reglages Netlify :
+
+```text
+Base directory: .
+Publish directory: docs
+Build command: laisser vide
+```
+
+Quand GitHub Pages est active, il peut aussi etre publie a cette adresse :
 
 ```text
 https://odg747.github.io/OLEEN/
@@ -77,6 +88,14 @@ Le site est statique. Il suffit d'ouvrir ce fichier dans un navigateur :
 docs/index.html
 ```
 
+## Script video
+
+Un script d'enregistrement est disponible ici :
+
+```text
+PRESENTATION_VIDEO.md
+```
+
 ## Organisation de l'equipe
 
 L'equipe est composee de 7 personnes :
@@ -99,6 +118,8 @@ L'equipe est composee de 7 personnes :
 |   +-- styles.css
 |   +-- script.js
 |   +-- assets/
++-- netlify.toml
++-- PRESENTATION_VIDEO.md
 +-- metro.config.js
 +-- package.json
 +-- README.md
