@@ -544,6 +544,52 @@ a {
   font-size: 15px;
 }
 
+/* --- Zone de livraison avec QR Code --- */
+.delivery-container {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 24px;
+  margin-top: 28px;
+}
+
+.delivery-grid {
+  margin-top: 0; /* Remplace la marge supérieure par défaut */
+}
+
+.qr-card {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel);
+  padding: 24px;
+}
+
+.qr-image {
+  width: 160px;
+  height: 160px;
+  border-radius: 8px;
+  background: #ffffff; /* Assure la lisibilité du QR code en mode sombre */
+  padding: 8px;
+  box-shadow: 0 4px 12px rgba(32, 36, 43, 0.05);
+}
+
+.qr-text h3 {
+  margin: 16px 0 8px;
+  color: var(--ink);
+  font-size: 20px;
+}
+
+.qr-text p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
 .site-footer {
   min-height: 78px;
   display: flex;
@@ -560,6 +606,7 @@ a {
   font-weight: 900;
 }
 
+/* --- Media Queries --- */
 @media (max-width: 860px) {
   .site-header {
     align-items: flex-start;
@@ -597,6 +644,15 @@ a {
   .tech-grid,
   .delivery-grid {
     grid-template-columns: 1fr;
+  }
+
+  .delivery-container {
+    grid-template-columns: 1fr;
+  }
+
+  .qr-image {
+    width: 180px;
+    height: 180px;
   }
 
   .section {

@@ -23,6 +23,12 @@
       "eas": {
         "projectId": "a3d4c791-dea2-48fa-b219-fd072abf8e50"
       }
+    },
+    "ios": {
+      "bundleIdentifier": "com.odg747.oleen",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     }
   }
 }
