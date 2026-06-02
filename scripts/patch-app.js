@@ -358,8 +358,7 @@ source = source.replace(
 
 source = source.replace(
   '<Text style={styles.heroTitle}>Tableau de bord OLEEN</Text>\n            <Text style={styles.heroText}>Une demo mobile complete pour presenter les 6 modules du projet.</Text>',
-  `<Text style={styles.heroTitle}>Bonjour, ${'${state.profile.name.split(' ')[0]}'}</Text>
-            <Text style={styles.heroText}>Retrouvez sport, astronomie, paris virtuels, solfege, live et reseau social au meme endroit.</Text>`
+  "<Text style={styles.heroTitle}>{`Bonjour, ${state.profile.name.split(' ')[0]}`}</Text>\n            <Text style={styles.heroText}>Retrouvez sport, astronomie, paris virtuels, solfege, live et reseau social au meme endroit.</Text>"
 );
 
 source = source.replace(
@@ -378,19 +377,25 @@ source = source.replace(
   `<Text style={styles.cardTitle}>Application OLEEN</Text>\n              <Text style={styles.smallMuted}>Experience fluide, donnees locales et credits virtuels uniquement.</Text>`
 );
 
-const bettingPlaceBet = source.indexOf('function placeBet(match, outcome, amount)');
-if (bettingPlaceBet > 0) {
-  source = source.replace(
-    /setState\(\(current\) => \(\{\n      \.\.\.current,\n      wallet: Number\(\(current\.wallet - stake\)\.toFixed\(2\)\),\n      bets: \[bet, \.\.\.current\.bets\],\n    \}\)\);/,
-    `setState((current) => ({
+source = source.replace(
+  'function BettingScreen({ state, setState }) {',
+  'function BettingScreen({ state, setState, showToast }) {'
+);
+source = source.replace(
+  /setState\(\(current\) => \(\{\n      \.\.\.current,\n      wallet: Number\(\(current\.wallet - stake\)\.toFixed\(2\)\),\n      bets: \[bet, \.\.\.current\.bets\],\n    \}\)\);\n  \}/,
+  `setState((current) => ({
       ...current,
       wallet: Number((current.wallet - stake).toFixed(2)),
       bets: [bet, ...current.bets],
     }));
-    showToast('Mise enregistree');`
-  );
-}
+    showToast('Mise enregistree');
+  }`
+);
 
+source = source.replace(
+  'function SocialScreen({ state, setState }) {',
+  'function SocialScreen({ state, setState, showToast }) {'
+);
 source = source.replace(
   /setState\(\(current\) => \(\{ \.\.\.current, posts: \[post, \.\.\.current\.posts\] \}\)\);\n    setDraft\(''\);/,
   `setState((current) => ({ ...current, posts: [post, ...current.posts] }));

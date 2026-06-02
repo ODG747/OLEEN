@@ -1,19 +1,25 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
+import * as Haptics from 'expo-haptics';
 import {
+  ActivityIndicator,
   Alert,
+  Animated,
+  Image,
   KeyboardAvoidingView,
   Linking,
+  Platform,
   Pressable,
-  SafeAreaView,
+  RefreshControl,
   ScrollView,
-  StyleSheet,
   Text,
   TextInput,
   View,
 } from 'react-native';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
+  ArrowLeft,
   BadgeDollarSign,
   BookOpen,
   CheckCircle2,
@@ -24,6 +30,7 @@ import {
   Heart,
   Home,
   MessageCircle,
+  Moon,
   Music2,
   Play,
   Plus,
@@ -32,29 +39,25 @@ import {
   Share2,
   Sparkles,
   Star,
+  Sun,
   Telescope,
   Trophy,
   Users,
   WalletCards,
 } from 'lucide-react-native';
+import { BRAND, getThemeBundle, THEME_STORAGE_KEY } from './theme';
 
 const STORAGE_KEY = '@oleen-mobile-state-v1';
 
-const COLORS = {
-  bg: '#F7F5EF',
-  panel: '#FFFFFF',
-  panelSoft: '#FBFAF6',
-  ink: '#1F2329',
-  muted: '#6D7280',
-  line: '#E7E0D2',
-  gold: '#C99B2E',
-  goldSoft: '#FFF4CE',
-  dark: '#2B2F36',
-  teal: '#167D7F',
-  red: '#B94747',
-  green: '#2D7D46',
-  blue: '#315D95',
-};
+const UIContext = React.createContext(null);
+
+function useUI() {
+  const context = React.useContext(UIContext);
+  if (!context) {
+    throw new Error('useUI must be used inside the OLEEN app shell.');
+  }
+  return context;
+}
 
 const NAV_ITEMS = [
   { id: 'home', label: 'Accueil', Icon: Home },
@@ -72,42 +75,42 @@ const MODULES = [
     title: 'Videos de sports',
     subtitle: 'Selection et agregateur video',
     Icon: Dumbbell,
-    color: COLORS.gold,
+    color: colors.gold,
   },
   {
     id: 'astronomy',
     title: 'Sciences astronomiques',
     subtitle: 'Articles, evenements et quiz',
     Icon: Telescope,
-    color: COLORS.blue,
+    color: colors.blue,
   },
   {
     id: 'betting',
     title: 'Paris sportifs',
     subtitle: 'Mises simulees en credits',
     Icon: BadgeDollarSign,
-    color: COLORS.green,
+    color: colors.green,
   },
   {
     id: 'solfege',
     title: 'Solfege par instrument',
     subtitle: 'Modules piano, guitare, violon...',
     Icon: BookOpen,
-    color: COLORS.teal,
+    color: colors.teal,
   },
   {
     id: 'music',
     title: 'Videos de musique live',
     subtitle: 'Scene en direct et replay',
     Icon: Radio,
-    color: COLORS.red,
+    color: colors.red,
   },
   {
     id: 'social',
     title: 'Reseau social',
     subtitle: 'Profil, fil, likes, commentaires',
     Icon: Users,
-    color: COLORS.dark,
+    color: colors.dark,
   },
 ];
 
@@ -209,7 +212,7 @@ const INSTRUMENTS = [
   {
     id: 'piano',
     title: 'Piano',
-    color: COLORS.dark,
+    color: colors.dark,
     lessons: [
       { id: 'p1', title: 'Lire les notes sur la cle de sol', skill: 'Do Re Mi Fa Sol' },
       { id: 'p2', title: 'Jouer une gamme majeure', skill: 'Do majeur' },
@@ -219,7 +222,7 @@ const INSTRUMENTS = [
   {
     id: 'guitare',
     title: 'Guitare',
-    color: COLORS.gold,
+    color: colors.gold,
     lessons: [
       { id: 'g1', title: 'Lire une tablature', skill: 'Cordes et frettes' },
       { id: 'g2', title: 'Accords ouverts', skill: 'Em, C, G, D' },
@@ -229,7 +232,7 @@ const INSTRUMENTS = [
   {
     id: 'violon',
     title: 'Violon',
-    color: COLORS.red,
+    color: colors.red,
     lessons: [
       { id: 'v1', title: 'Position des cordes', skill: 'Sol Re La Mi' },
       { id: 'v2', title: 'Premiere lecture melodique', skill: 'Notes longues' },
@@ -239,7 +242,7 @@ const INSTRUMENTS = [
   {
     id: 'flute',
     title: 'Flute',
-    color: COLORS.teal,
+    color: colors.teal,
     lessons: [
       { id: 'f1', title: 'Respiration et phrases', skill: 'Souffle stable' },
       { id: 'f2', title: 'Notes liees', skill: 'Legato' },
@@ -249,7 +252,7 @@ const INSTRUMENTS = [
   {
     id: 'batterie',
     title: 'Batterie',
-    color: COLORS.blue,
+    color: colors.blue,
     lessons: [
       { id: 'b1', title: 'Pulsation et tempo', skill: '60 a 90 BPM' },
       { id: 'b2', title: 'Rythme rock basique', skill: 'Kick snare hi-hat' },
@@ -347,25 +350,157 @@ function cloneDefaultState() {
 }
 
 export default function App() {
+  const insets = useSafeAreaInsets();
   const [activeScreen, setActiveScreen] = useState('home');
-  const [state, setState] = usePersistentState();
+  const [state, setState, hydrated] = usePersistentState();
+  const [themeName, setThemeName] = useState('light');
+  const [themeReady, setThemeReady] = useState(false);
+  const [toast, setToast] = useState(null);
+  const [refreshing, setRefreshing] = useState(false);
+  const fadeAnim = useRef(new Animated.Value(1)).current;
+
+  const { colors, styles } = getThemeBundle(themeName);
+
+  useEffect(() => {
+    let mounted = true;
+
+    async function loadTheme() {
+      try {
+        const saved = await AsyncStorage.getItem(THEME_STORAGE_KEY);
+        if (mounted && saved === 'dark') {
+          setThemeName('dark');
+        }
+      } catch (error) {
+        console.warn('Unable to load theme preference', error);
+      } finally {
+        if (mounted) {
+          setThemeReady(true);
+        }
+      }
+    }
+
+    loadTheme();
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!toast) {
+      return undefined;
+    }
+    const timer = setTimeout(() => setToast(null), 2400);
+    return () => clearTimeout(timer);
+  }, [toast]);
+
+  const showToast = useCallback((message) => {
+    setToast(message);
+    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
+  }, []);
+
+  const toggleTheme = useCallback(() => {
+    setThemeName((current) => {
+      const next = current === 'dark' ? 'light' : 'dark';
+      AsyncStorage.setItem(THEME_STORAGE_KEY, next).catch(() => {});
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+      return next;
+    });
+  }, []);
+
+  const navigate = useCallback(
+    (screenId) => {
+      if (screenId === activeScreen) {
+        return;
+      }
+
+      Haptics.selectionAsync().catch(() => {});
+      Animated.timing(fadeAnim, {
+        toValue: 0,
+        duration: 110,
+        useNativeDriver: true,
+      }).start(({ finished }) => {
+        if (!finished) {
+          return;
+        }
+        setActiveScreen(screenId);
+        Animated.timing(fadeAnim, {
+          toValue: 1,
+          duration: 180,
+          useNativeDriver: true,
+        }).start();
+      });
+    },
+    [activeScreen, fadeAnim]
+  );
+
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {});
+    setTimeout(() => setRefreshing(false), 700);
+  }, []);
+
+  if (!hydrated || !themeReady) {
+    return <LoadingScreen />;
+  }
 
   const title = NAV_ITEMS.find((item) => item.id === activeScreen)?.label ?? 'OLEEN';
+  const ui = {
+    colors,
+    styles,
+    themeName,
+    toggleTheme,
+    showToast,
+    navigate,
+    activeScreen,
+  };
 
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <StatusBar style="light" />
-      <View style={styles.shell}>
-        <Header title={title} wallet={state.wallet} />
-        <KeyboardAvoidingView
-          behavior={undefined}
-          style={styles.contentWrap}
-        >
-          <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-            {renderScreen(activeScreen, state, setState, setActiveScreen)}
-          </ScrollView>
-        </KeyboardAvoidingView>
-        <BottomNav active={activeScreen} onChange={setActiveScreen} />
+    <UIContext.Provider value={ui}>
+      <SafeAreaView style={styles.safeArea} edges={['top']}>
+        <StatusBar style={themeName === 'dark' ? 'light' : 'light'} />
+        <View style={styles.shell}>
+          <Header title={title} wallet={state.wallet} />
+          <KeyboardAvoidingView
+            behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+            style={styles.contentWrap}
+            keyboardVerticalOffset={Platform.OS === 'ios' ? 8 : 0}
+          >
+            <Animated.View style={[styles.contentWrap, { opacity: fadeAnim }]}>
+              <ScrollView
+                contentContainerStyle={styles.content}
+                showsVerticalScrollIndicator={false}
+                refreshControl={
+                  activeScreen === 'home' ? (
+                    <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.gold} />
+                  ) : undefined
+                }
+              >
+                {renderScreen(activeScreen, state, setState, navigate, showToast)}
+              </ScrollView>
+            </Animated.View>
+          </KeyboardAvoidingView>
+          <BottomNav active={activeScreen} onChange={navigate} bottomInset={insets.bottom} />
+          {toast ? (
+            <View style={[styles.toast, { bottom: Math.max(insets.bottom, 12) + 72 }]}>
+              <Text style={styles.toastText}>{toast}</Text>
+            </View>
+          ) : null}
+        </View>
+      </SafeAreaView>
+    </UIContext.Provider>
+  );
+}
+
+function LoadingScreen() {
+  const { colors, styles } = getThemeBundle('light');
+
+  return (
+    <SafeAreaView style={styles.safeArea} edges={['top', 'bottom']}>
+      <View style={styles.loadingScreen}>
+        <Image source={require('./assets/icon.png')} style={styles.loadingLogo} />
+        <Text style={styles.loadingTitle}>OLEEN</Text>
+        <ActivityIndicator size="large" color={colors.gold} />
+        <Text style={styles.loadingCaption}>Chargement de votre espace...</Text>
       </View>
     </SafeAreaView>
   );
@@ -417,11 +552,11 @@ function usePersistentState() {
     });
   }, [hydrated, state]);
 
-  return [state, setState];
+  return [state, setState, hydrated];
 }
 
-function renderScreen(activeScreen, state, setState, navigate) {
-  const props = { state, setState, navigate };
+function renderScreen(activeScreen, state, setState, navigate, showToast) {
+  const props = { state, setState, navigate, showToast };
 
   switch (activeScreen) {
     case 'sports':
@@ -442,24 +577,57 @@ function renderScreen(activeScreen, state, setState, navigate) {
 }
 
 function Header({ title, wallet }) {
+  const { styles, colors, themeName, toggleTheme, navigate, activeScreen } = useUI();
+  const canGoBack = activeScreen !== 'home';
+
   return (
     <View style={styles.header}>
-      <View>
-        <Text style={styles.brand}>OLEEN</Text>
-        <Text style={styles.headerTitle}>{title}</Text>
-        <Text style={styles.headerCaption}>Prototype mobile - Expo SDK 54</Text>
-      </View>
-      <View style={styles.walletBadge}>
-        <WalletCards size={17} color={COLORS.gold} />
-        <Text style={styles.walletText}>{formatCredits(wallet)}</Text>
+      <View style={styles.headerMain}>
+        <View style={styles.brandRow}>
+          {canGoBack ? (
+            <Pressable
+              onPress={() => navigate('home')}
+              style={({ pressed }) => [styles.headerIconButton, pressed && styles.headerIconButtonPressed]}
+              accessibilityRole="button"
+              accessibilityLabel="Retour a l accueil"
+            >
+              <ArrowLeft size={20} color={colors.onDark} />
+            </Pressable>
+          ) : (
+            <Image source={require('./assets/icon.png')} style={styles.headerLogo} />
+          )}
+          <View style={styles.flex}>
+            <Text style={styles.brand}>OLEEN</Text>
+            <Text style={styles.headerTitle}>{title}</Text>
+            <Text style={styles.headerCaption}>
+              {canGoBack ? 'Module actif' : 'Bienvenue sur votre application'}
+            </Text>
+          </View>
+        </View>
+        <View style={styles.headerActions}>
+          <Pressable
+            onPress={toggleTheme}
+            style={({ pressed }) => [styles.headerIconButton, pressed && styles.headerIconButtonPressed]}
+            accessibilityRole="button"
+            accessibilityLabel={themeName === 'dark' ? 'Activer le theme clair' : 'Activer le theme sombre'}
+          >
+            {themeName === 'dark' ? <Sun size={18} color={colors.gold} /> : <Moon size={18} color={colors.gold} />}
+          </Pressable>
+          <View style={styles.walletBadge}>
+            <WalletCards size={17} color={colors.gold} />
+            <Text style={styles.walletText}>{formatCredits(wallet)}</Text>
+          </View>
+        </View>
       </View>
     </View>
   );
 }
 
-function BottomNav({ active, onChange }) {
+function BottomNav({ active, onChange, bottomInset }) {
+  const { styles, colors } = useUI();
+
   return (
-    <View style={styles.navWrap}>
+    <View style={[styles.navWrap, { paddingBottom: Math.max(bottomInset, 10) }]}>
       <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.nav}>
         {NAV_ITEMS.map(({ id, label, Icon }) => {
           const isActive = active === id;
@@ -467,10 +635,15 @@ function BottomNav({ active, onChange }) {
             <Pressable
               key={id}
               onPress={() => onChange(id)}
-              style={[styles.navItem, isActive && styles.navItemActive]}
+              style={({ pressed }) => [
+                styles.navItem,
+                isActive && styles.navItemActive,
+                pressed && styles.navItemPressed,
+              ]}
             >
-              <Icon size={18} color={isActive ? COLORS.ink : COLORS.muted} />
+              <Icon size={20} color={isActive ? colors.ink : colors.muted} />
               <Text style={[styles.navLabel, isActive && styles.navLabelActive]}>{label}</Text>
+              {isActive ? <View style={styles.navActiveDot} /> : null}
             </Pressable>
           );
         })}
@@ -480,6 +653,7 @@ function BottomNav({ active, onChange }) {
 }
 
 function HomeScreen({ state, navigate }) {
+  const { styles, colors } = useUI();
   const completedCount = Object.values(state.completedLessons).filter(Boolean).length;
   const pendingBets = state.bets.filter((bet) => bet.status === 'pending').length;
   const totalLikes = state.posts.reduce((sum, post) => sum + post.likes, 0);
@@ -489,11 +663,11 @@ function HomeScreen({ state, navigate }) {
       <View style={styles.heroPanel}>
         <View style={styles.heroHeader}>
           <View style={styles.logoMark}>
-            <Sparkles size={30} color={COLORS.ink} />
+            <Sparkles size={30} color={colors.ink} />
           </View>
           <View style={styles.flex}>
-            <Text style={styles.heroTitle}>Tableau de bord OLEEN</Text>
-            <Text style={styles.heroText}>Une demo mobile complete pour presenter les 6 modules du projet.</Text>
+            <Text style={styles.heroTitle}>{`Bonjour, ${state.profile.name.split(' ')[0]}`}</Text>
+            <Text style={styles.heroText}>Retrouvez sport, astronomie, paris virtuels, solfege, live et reseau social au meme endroit.</Text>
           </View>
         </View>
         <View style={styles.statsRow}>
@@ -506,15 +680,15 @@ function HomeScreen({ state, navigate }) {
 
       <View style={styles.statusPanel}>
         <View style={styles.statusIcon}>
-          <CheckCircle2 size={22} color={COLORS.green} />
+          <CheckCircle2 size={22} color={colors.green} />
         </View>
         <View style={styles.flex}>
-          <Text style={styles.statusTitle}>Projet pret pour la demonstration</Text>
-          <Text style={styles.statusText}>Navigation, interactions locales, credits virtuels et progression sont operationnels.</Text>
+          <Text style={styles.statusTitle}>Tout est synchronise sur cet appareil</Text>
+          <Text style={styles.statusText}>Vos credits, cours, paris et publications sont enregistres localement.</Text>
         </View>
       </View>
 
-      <SectionTitle title="Modules obligatoires" subtitle="Tous les blocs du devoir sont presents." />
+      <SectionTitle title="Explorer" subtitle="Accedez a chaque univers OLEEN." />
       <View style={styles.moduleGrid}>
         {MODULES.map((module) => (
           <ModuleTile key={module.id} module={module} onPress={() => navigate(module.id)} />
@@ -524,13 +698,13 @@ function HomeScreen({ state, navigate }) {
       <Card>
         <View style={styles.rowBetween}>
           <View style={styles.rowSmall}>
-            <CheckCircle2 size={22} color={COLORS.green} />
+            <CheckCircle2 size={22} color={colors.green} />
             <View>
-              <Text style={styles.cardTitle}>Version demo mobile</Text>
-              <Text style={styles.smallMuted}>Donnees locales, sans serveur et sans argent reel.</Text>
+              <Text style={styles.cardTitle}>Application OLEEN</Text>
+              <Text style={styles.smallMuted}>Experience fluide, donnees locales et credits virtuels uniquement.</Text>
             </View>
           </View>
-          <Star size={20} color={COLORS.gold} />
+          <Star size={20} color={colors.gold} />
         </View>
       </Card>
 
@@ -544,6 +718,7 @@ function HomeScreen({ state, navigate }) {
 }
 
 function SportsScreen() {
+  const { styles, colors, showToast } = useUI();
   const [selected, setSelected] = useState(SPORTS_VIDEOS[0]);
   const [playing, setPlaying] = useState(false);
 
@@ -571,6 +746,7 @@ function SportsScreen() {
 }
 
 function AstronomyScreen() {
+  const { styles, colors, showToast } = useUI();
   const [selectedArticle, setSelectedArticle] = useState(ASTRONOMY_ARTICLES[0]);
   const [quizChoice, setQuizChoice] = useState(null);
 
@@ -582,7 +758,7 @@ function AstronomyScreen() {
 
       <Card>
         <View style={styles.rowSmall}>
-          <Telescope size={24} color={COLORS.blue} />
+          <Telescope size={24} color={colors.blue} />
           <View style={styles.flex}>
             <Text style={styles.cardTitle}>{selectedArticle.title}</Text>
             <Text style={styles.smallMuted}>
@@ -613,7 +789,7 @@ function AstronomyScreen() {
               <Text style={styles.smallMuted}>{event.status}</Text>
             </View>
             <View style={styles.timeBadge}>
-              <Clock3 size={15} color={COLORS.ink} />
+              <Clock3 size={15} color={colors.ink} />
               <Text style={styles.timeText}>{event.time}</Text>
             </View>
           </View>
@@ -646,6 +822,7 @@ function AstronomyScreen() {
 }
 
 function BettingScreen({ state, setState }) {
+  const { styles, colors, showToast } = useUI();
   const pending = state.bets.filter((bet) => bet.status === 'pending');
   const settled = state.bets.filter((bet) => bet.status !== 'pending');
 
@@ -685,6 +862,7 @@ function BettingScreen({ state, setState }) {
       wallet: Number((current.wallet - stake).toFixed(2)),
       bets: [bet, ...current.bets],
     }));
+    showToast('Mise enregistree');
   }
 
   function settleBet(betId, won) {
@@ -719,7 +897,7 @@ function BettingScreen({ state, setState }) {
 
       <Card>
         <View style={styles.rowSmall}>
-          <CheckCircle2 size={22} color={COLORS.green} />
+          <CheckCircle2 size={22} color={colors.green} />
           <View style={styles.flex}>
             <Text style={styles.cardTitle}>Simulation responsable</Text>
             <Text style={styles.smallMuted}>Les mises utilisent uniquement des credits virtuels. Aucun argent reel n'est gere par l'application.</Text>
@@ -754,6 +932,7 @@ function BettingScreen({ state, setState }) {
 }
 
 function SolfegeScreen({ state, setState }) {
+  const { styles, colors, showToast } = useUI();
   const [instrumentId, setInstrumentId] = useState(INSTRUMENTS[0].id);
   const [answer, setAnswer] = useState(null);
   const instrument = INSTRUMENTS.find((item) => item.id === instrumentId) ?? INSTRUMENTS[0];
@@ -807,7 +986,7 @@ function SolfegeScreen({ state, setState }) {
                 <Text style={styles.smallMuted}>{lesson.skill}</Text>
               </View>
               <Pressable onPress={() => toggleLesson(lesson)} style={[styles.iconAction, done && styles.iconActionDone]}>
-                <CheckCircle2 size={22} color={done ? COLORS.green : COLORS.muted} />
+                <CheckCircle2 size={22} color={done ? colors.green : colors.muted} />
               </Pressable>
             </View>
           </Card>
@@ -833,6 +1012,7 @@ function SolfegeScreen({ state, setState }) {
 }
 
 function MusicScreen() {
+  const { styles, colors, showToast } = useUI();
   const [activeLive, setActiveLive] = useState(MUSIC_LIVES[0]);
   const [playing, setPlaying] = useState(true);
 
@@ -874,12 +1054,12 @@ function MusicScreen() {
               }}
               style={[styles.compactButton, activeLive.id === live.id && styles.compactButtonActive]}
             >
-              <Radio size={16} color={activeLive.id === live.id ? COLORS.ink : COLORS.muted} />
+              <Radio size={16} color={activeLive.id === live.id ? colors.ink : colors.muted} />
             </Pressable>
           </View>
           <Pressable style={styles.secondaryButton} onPress={() => openExternal(live.url)}>
             <Text style={styles.secondaryButtonText}>Ouvrir la source</Text>
-            <ChevronRight size={16} color={COLORS.ink} />
+            <ChevronRight size={16} color={colors.ink} />
           </Pressable>
         </Card>
       ))}
@@ -888,6 +1068,7 @@ function MusicScreen() {
 }
 
 function SocialScreen({ state, setState }) {
+  const { styles, colors, showToast } = useUI();
   const [draft, setDraft] = useState('');
   const [commentDrafts, setCommentDrafts] = useState({});
 
@@ -909,6 +1090,7 @@ function SocialScreen({ state, setState }) {
     };
 
     setState((current) => ({ ...current, posts: [post, ...current.posts] }));
+    showToast('Publication envoyee');
     setDraft('');
   }
 
@@ -954,7 +1136,7 @@ function SocialScreen({ state, setState }) {
       <Card>
         <View style={styles.profileRow}>
           <View style={styles.avatar}>
-            <CircleUserRound size={34} color={COLORS.ink} />
+            <CircleUserRound size={34} color={colors.ink} />
           </View>
           <View style={styles.flex}>
             <Text style={styles.cardTitle}>{state.profile.name}</Text>
@@ -970,7 +1152,7 @@ function SocialScreen({ state, setState }) {
           value={draft}
           onChangeText={setDraft}
           placeholder="Partage une video, une note ou une observation..."
-          placeholderTextColor={COLORS.muted}
+          placeholderTextColor={colors.muted}
           multiline
           style={styles.postInput}
         />
@@ -1014,7 +1196,7 @@ function SocialScreen({ state, setState }) {
               value={commentDrafts[post.id] ?? ''}
               onChangeText={(value) => setCommentDrafts((current) => ({ ...current, [post.id]: value }))}
               placeholder="Commentaire"
-              placeholderTextColor={COLORS.muted}
+              placeholderTextColor={colors.muted}
               style={styles.commentInput}
             />
             <Pressable style={styles.sendButton} onPress={() => addComment(post.id)}>
@@ -1028,6 +1210,7 @@ function SocialScreen({ state, setState }) {
 }
 
 function VideoStage({ item, playing, onToggle }) {
+  const { styles, colors, showToast } = useUI();
   return (
     <View style={styles.videoStage}>
       <View style={styles.videoFrame}>
@@ -1045,6 +1228,7 @@ function VideoStage({ item, playing, onToggle }) {
 }
 
 function VideoListItem({ item, active, onSelect, onOpen }) {
+  const { styles, colors, showToast } = useUI();
   return (
     <Card>
       <Pressable onPress={onSelect} style={styles.videoItemBody}>
@@ -1058,13 +1242,14 @@ function VideoListItem({ item, active, onSelect, onOpen }) {
       </Pressable>
       <Pressable style={styles.secondaryButton} onPress={onOpen}>
         <Text style={styles.secondaryButtonText}>Ouvrir la source</Text>
-        <ChevronRight size={16} color={COLORS.ink} />
+        <ChevronRight size={16} color={colors.ink} />
       </Pressable>
     </Card>
   );
 }
 
 function MatchCard({ match, onPlaceBet }) {
+  const { styles, colors, showToast } = useUI();
   const [selectedOutcome, setSelectedOutcome] = useState(null);
   const [stake, setStake] = useState('25');
   const potential = selectedOutcome ? Number((Number(stake || 0) * selectedOutcome.odds).toFixed(2)) : 0;
@@ -1076,7 +1261,7 @@ function MatchCard({ match, onPlaceBet }) {
           <Text style={styles.cardTitle}>{match.title}</Text>
           <Text style={styles.smallMuted}>{match.sport} - {match.date}</Text>
         </View>
-        <Trophy size={21} color={COLORS.gold} />
+        <Trophy size={21} color={colors.gold} />
       </View>
       <View style={styles.outcomeGrid}>
         {match.outcomes.map((outcome) => (
@@ -1097,7 +1282,7 @@ function MatchCard({ match, onPlaceBet }) {
           keyboardType="decimal-pad"
           style={styles.stakeInput}
           placeholder="Mise"
-          placeholderTextColor={COLORS.muted}
+          placeholderTextColor={colors.muted}
         />
         <Pressable style={styles.primaryButton} onPress={() => onPlaceBet(match, selectedOutcome, stake)}>
           <BadgeDollarSign size={18} color="#FFFFFF" />
@@ -1110,6 +1295,7 @@ function MatchCard({ match, onPlaceBet }) {
 }
 
 function BetTicket({ bet, onWin, onLose }) {
+  const { styles, colors, showToast } = useUI();
   return (
     <Card>
       <View style={styles.rowBetweenTop}>
@@ -1139,6 +1325,7 @@ function BetTicket({ bet, onWin, onLose }) {
 }
 
 function BetHistory({ bet }) {
+  const { styles, colors, showToast } = useUI();
   const won = bet.status === 'won';
   return (
     <View style={styles.historyLine}>
@@ -1151,6 +1338,7 @@ function BetHistory({ bet }) {
 }
 
 function ModuleTile({ module, onPress }) {
+  const { styles, colors, showToast } = useUI();
   const Icon = module.Icon;
   return (
     <Pressable style={styles.moduleTile} onPress={onPress}>
@@ -1164,6 +1352,7 @@ function ModuleTile({ module, onPress }) {
 }
 
 function SectionTitle({ title, subtitle }) {
+  const { styles, colors, showToast } = useUI();
   return (
     <View style={styles.sectionTitle}>
       <Text style={styles.sectionHeading}>{title}</Text>
@@ -1173,10 +1362,12 @@ function SectionTitle({ title, subtitle }) {
 }
 
 function Card({ children }) {
+  const { styles, colors, showToast } = useUI();
   return <View style={styles.card}>{children}</View>;
 }
 
 function StatPill({ label, value }) {
+  const { styles, colors, showToast } = useUI();
   return (
     <View style={styles.statPill}>
       <Text style={styles.statValue}>{value}</Text>
@@ -1186,6 +1377,7 @@ function StatPill({ label, value }) {
 }
 
 function MiniProof({ label, value }) {
+  const { styles, colors, showToast } = useUI();
   return (
     <View style={styles.miniProof}>
       <Text style={styles.miniProofValue}>{value}</Text>
@@ -1195,6 +1387,7 @@ function MiniProof({ label, value }) {
 }
 
 function Chip({ label, active, onPress }) {
+  const { styles, colors, showToast } = useUI();
   return (
     <Pressable style={[styles.chip, active && styles.chipActive]} onPress={onPress}>
       <Text style={[styles.chipText, active && styles.chipTextActive]}>{label}</Text>
@@ -1203,6 +1396,7 @@ function Chip({ label, active, onPress }) {
 }
 
 function ChoiceButton({ label, active, onPress }) {
+  const { styles, colors, showToast } = useUI();
   return (
     <Pressable style={[styles.choiceButton, active && styles.choiceButtonActive]} onPress={onPress}>
       <Text style={[styles.choiceText, active && styles.choiceTextActive]}>{label}</Text>
@@ -1211,15 +1405,17 @@ function ChoiceButton({ label, active, onPress }) {
 }
 
 function SocialAction({ Icon, label, active, onPress }) {
+  const { styles, colors, showToast } = useUI();
   return (
     <Pressable style={[styles.socialAction, active && styles.socialActionActive]} onPress={onPress}>
-      <Icon size={18} color={active ? COLORS.red : COLORS.muted} fill={active ? COLORS.red : 'transparent'} />
+      <Icon size={18} color={active ? colors.red : colors.muted} fill={active ? colors.red : 'transparent'} />
       <Text style={[styles.socialActionText, active && styles.socialActionTextActive]}>{label}</Text>
     </Pressable>
   );
 }
 
 function EmptyState({ text }) {
+  const { styles, colors, showToast } = useUI();
   return (
     <View style={styles.emptyState}>
       <Text style={styles.emptyText}>{text}</Text>

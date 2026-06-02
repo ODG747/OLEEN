@@ -28,7 +28,7 @@ function updateThemeButton() {
   }
 
   const isDark = document.documentElement.dataset.theme === 'dark';
-  themeToggle.textContent = isDark ? 'Theme clair' : 'Theme sombre';
+  themeToggle.textContent = isDark ? 'Theme clair ☀️' : 'Theme sombre 🌙';
   themeToggle.setAttribute('aria-pressed', String(isDark));
 }
 
