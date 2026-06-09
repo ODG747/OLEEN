@@ -1,6 +1,6 @@
 # OLEEN
 
-OLEEN est une application mobile realisee dans le cadre d'un projet de lycee.
+OLEEN est une application mobile réalisée dans le cadre d'un projet de Lycée de fin d'année de 2nd.
 Elle rassemble plusieurs espaces dans une seule experience : sport, astronomie,
 musique, apprentissage du solfege, reseau social et paris sportifs simules.
 
@@ -8,23 +8,9 @@ musique, apprentissage du solfege, reseau social et paris sportifs simules.
 
 Le site vitrine du projet se trouve dans le dossier `docs/`.
 
-Il peut etre heberge avec Netlify. Le fichier `netlify.toml` indique deja que
-le dossier a publier est `docs`.
+Il peut être hébergé avec Github Pages.
 
-Reglages Netlify :
-
-```text
-Base directory: .
-Publish directory: docs
-Build command: laisser vide, ou utiliser:
-echo Static Netlify site: no build step required
-```
-
-Important : si Netlify affiche encore `expo export -p web`, il faut supprimer cette
-commande dans Site configuration > Build & deploy > Build settings. Le site web
-du projet n'est pas l'export web Expo, c'est le site statique du dossier `docs`.
-
-Quand GitHub Pages est active, il peut aussi etre publie a cette adresse :
+Quand GitHub Pages est activé, il peut aussi être publié à cette adresse :
 
 ```text
 https://odg747.github.io/OLEEN/
@@ -32,19 +18,19 @@ https://odg747.github.io/OLEEN/
 
 ## Application mobile
 
-La version mobile est developpee avec Expo React Native. Elle est presentee et
-testee sur Android avec Expo Go.
+La version mobile est développée avec Expo React Native. Elle est présentée et
+téstée sur Android avec Expo Go.
 
-Fonctionnalites principales :
+Fonctionnalités principales :
 
 - Videos de sports
 - Sciences astronomiques
-- Paris sportifs simules avec credits virtuels
-- Apprentissage du solfege par instrument
-- Videos de musique live ou replay
-- Reseau social avec publications, likes, commentaires et partages
+- Paris sportifs simulés avec credits virtuels
+- Apprentissage du solfège par instrument
+- Vidéos de musique live ou replay
+- Réseau social avec publications, likes, commentaires et partages
 
-Le module de paris est uniquement une simulation. Il n'utilise pas d'argent reel.
+Le module de paris est uniquement une simulation. Il n'utilise pas d'argent réel.
 
 ## Stack
 
@@ -53,7 +39,7 @@ Le module de paris est uniquement une simulation. Il n'utilise pas d'argent reel
 - React 19
 - JavaScript
 - AsyncStorage
-- HTML, CSS et JavaScript pour le site de presentation
+- HTML, CSS et JavaScript pour le site de présentation
 
 ## Installation
 
@@ -67,11 +53,11 @@ npm install
 npm start
 ```
 
-Le serveur Expo demarre sur le port `8083`.
+Le serveur Expo démarre sur le port `8083` par défaut.
 
 ## Builds EAS
 
-Le projet est configure avec EAS Build.
+Le projet est configuré avec EAS Build.
 
 Build de test interne :
 
@@ -93,24 +79,6 @@ Le site est statique. Il suffit d'ouvrir ce fichier dans un navigateur :
 docs/index.html
 ```
 
-## Script video
-
-Un script d'enregistrement est disponible ici :
-
-```text
-PRESENTATION_VIDEO.md
-```
-
-## Organisation de l'equipe
-
-L'equipe est composee de 7 personnes :
-
-- 1 chef developpeur
-- 1 developpeur
-- 3 designers
-- 1 responsable communication
-- 1 responsable finances
-
 ## Structure
 
 ```text
@@ -130,8 +98,8 @@ L'equipe est composee de 7 personnes :
 +-- README.md
 ```
 
-## Depot
+## Téléchargment
 
-```text
-https://github.com/ODG747/OLEEN
+```
+https://expo.dev/accounts/odg747/projects/oleen/builds/1c117ad6-17f0-4f72-89f0-7bb3541e8591
 ```
