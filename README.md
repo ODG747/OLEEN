@@ -79,25 +79,6 @@ Le site est statique. Il suffit d'ouvrir ce fichier dans un navigateur :
 docs/index.html
 ```
 
-## Structure
-
-```text
-.
-+-- App.js
-+-- app.json
-+-- assets/
-+-- docs/
-|   +-- index.html
-|   +-- styles.css
-|   +-- script.js
-|   +-- assets/
-+-- netlify.toml
-+-- PRESENTATION_VIDEO.md
-+-- metro.config.js
-+-- package.json
-+-- README.md
-```
-
 ## Téléchargment
 
 ```
